@@ -2,11 +2,13 @@ import tweepy
 
 class TweetFlood():
 
-    def __init__(self, flood, split_length=140):
+    def __init__(self, flood, split_length=140, username="utkucanbykl"):
 
         self.flood = str(flood)
         self.split_length = split_length
         self.__api = None
+        self.__tivit = 0
+        self.username = username
 
     def __split_tweet(self):
 
@@ -19,7 +21,8 @@ class TweetFlood():
             auth = tweepy.OAuthHandler(consumer, consumer_secret)
             auth.set_access_token(access, access_secret)
             self.__api = tweepy.API(auth)
-        except:
+
+        except BaseException:
             raise BaseException("import err")
 
     def getAuth(self):
@@ -48,12 +51,17 @@ class TweetFlood():
 
         auth = self.getAuth()
 
-        if auth == None:
+        if auth is None:
             raise BaseException("First set auth")
 
         for tweet in self.__tweet_array():
             try:
-                auth.update_status(tweet)
+                if self.__tivit > 0:
+                    last_tweet = auth.user_timeline(screen_name=self.username, count=1)
+                    auth.update_status(tweet, last_tweet[0].id)
+                else:
+                    auth.update_status(tweet)
+                    self.__tivit += 1
             except:
                 return False
         return True
