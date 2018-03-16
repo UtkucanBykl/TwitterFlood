@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 if args.flood and args.count and args.consumer and args.consumer_secret and args.access and args.access_secret:
 
-    c_key =  args.consumer
+    c_key = args.consumer
     c_secret = args.consumer_secret
     a_key = args.access
     a_secret = args.access_secret
