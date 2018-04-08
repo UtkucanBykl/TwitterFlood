@@ -7,7 +7,6 @@ class TweetFlood():
         self.flood = str(flood)
         self.split_length = split_length
         self.__api = None
-        self.__tivit = 0
         self.username = username
 
     def __split_tweet(self):
@@ -53,39 +52,42 @@ class TweetFlood():
 
         if auth is None:
             raise BaseException("First set auth")
-
+        count = 0
         for tweet in self.__tweet_array():
             try:
-                if self.__tivit > 0:
+                if count > 0:
                     last_tweet = auth.user_timeline(screen_name=self.username, count=1)
                     auth.update_status(tweet, last_tweet[0].id)
                 else:
                     auth.update_status(tweet)
-                    self.__tivit += 1
+                    count += 1
             except:
                 return False
         return True
 
-    def send_tweet_with_media(self, media):
+    def send_tweet_with_media(self, *media):
+
+        if not media:
+            raise BaseException("Add Media Path")
 
         auth = self.getAuth()
 
         if auth is None:
             raise BaseException("First set auth")
         media_ids = []
-
+        count = 0
         for m in media:
             res = auth.media_upload(m)
             media_ids.append(res.media_id)
 
         for tweet in self.__tweet_array():
             try:
-                if self.__tivit > 0:
+                if count > 0:
                     last_tweet = auth.user_timeline(screen_name=self.username, count=1)
                     auth.update_status(tweet, last_tweet[0].id)
                 else:
                     auth.update_status(tweet, media_ids=media_ids)
-                    self.__tivit += 1
+                    count += 1
             except:
                 return False
         return True
