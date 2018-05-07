@@ -1,5 +1,5 @@
 import argparse
-from base import TweetFlood
+from TwitterFlood.base import TweetFlood
 
 parser = argparse.ArgumentParser()
 
@@ -20,5 +20,5 @@ if args.flood and args.count and args.consumer and args.consumer_secret and args
     a_key = args.access
     a_secret = args.access_secret
     tw = TweetFlood(args.flood, int(args.count))
-    tw.setAuth(c_key, c_secret, a_key, a_secret)
+    tw.auth(c_key, c_secret, a_key, a_secret)
     tw.send_tweet()

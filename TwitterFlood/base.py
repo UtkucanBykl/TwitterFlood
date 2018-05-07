@@ -1,6 +1,7 @@
 import tweepy
 
-class TweetFlood():
+
+class TweetFlood:
 
     def __init__(self, flood, split_length=140, username="utkucanbykl"):
 
