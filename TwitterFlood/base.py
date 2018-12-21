@@ -23,12 +23,12 @@ class TweetFlood:
             self.__api = tweepy.API(auth)
 
         except BaseException:
-            raise BaseException("import err")
+            raise BaseException("OAUTH Failed. Check your keys")
 
     def getAuth(self):
         return self.__api
 
-    def __tweet_array(self):
+    def tweet_array(self):
 
         all_tweet = self.__split_tweet()
         count = 0
@@ -37,7 +37,10 @@ class TweetFlood:
         for t in all_tweet:
 
             if count + len(t) + 1 <= self.split_length:
-                tweet = tweet + " " + t
+                if count != 0:
+                    tweet = tweet + " " + t
+                else:
+                    tweet = tweet + t
                 count = len(tweet)
             elif len(t) <= self.split_length:
                 tweet_array.append(tweet)
@@ -50,11 +53,8 @@ class TweetFlood:
     def send_tweet(self):
 
         auth = self.getAuth()
-
-        if auth is None:
-            raise BaseException("First set auth")
         count = 0
-        for tweet in self.__tweet_array():
+        for tweet in self.tweet_array():
             try:
                 if count > 0:
                     last_tweet = auth.user_timeline(screen_name=self.username, count=1)
@@ -73,15 +73,13 @@ class TweetFlood:
 
         auth = self.getAuth()
 
-        if auth is None:
-            raise BaseException("First set auth")
         media_ids = []
         count = 0
         for m in media:
             res = auth.media_upload(m)
             media_ids.append(res.media_id)
 
-        for tweet in self.__tweet_array():
+        for tweet in self.tweet_array():
             try:
                 if count > 0:
                     last_tweet = auth.user_timeline(screen_name=self.username, count=1)
@@ -92,3 +90,4 @@ class TweetFlood:
             except:
                 return False
         return True
+
